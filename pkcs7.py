@@ -1,5 +1,16 @@
+"""
+Forked from https://github.com/janglin/crypto-pkcs7-example
+Refactored suitable for python3 and more pythonic way.
+* Changed xrange:
+ https://docs.python.org/3.0/whatsnew/3.0.html
+ range() now behaves like xrange() used to behave,
+ except it works with values of arbitrary size.
+ The latter no longer exists.
+* StringIO comes from io
+"""
 import binascii
-import StringIO
+from io import StringIO
+
 
 class PKCS7Encoder(object):
     '''
@@ -29,28 +40,28 @@ class PKCS7Encoder(object):
     def __init__(self, k=16):
         self.k = k
 
-    ## @param text The padded text for which the padding is to be removed.
-    # @exception ValueError Raised when the input padding is missing or corrupt.
     def decode(self, text):
         '''
         Remove the PKCS#7 padding from a text string
+        :param text: The padded text for which the padding is to be removed.
+        :exception ValueError: Raised when the input padding is missing or corrupt.
         '''
-        nl = len(text)
+        length_of_input = len(text)
         val = int(binascii.hexlify(text[-1]), 16)
         if val > self.k:
             raise ValueError('Input is not padded or padding is corrupt')
 
-        l = nl - val
-        return text[:l]
+        padding_length = length_of_input - val
+        return text[:padding_length]
 
-    ## @param text The text to encode.
     def encode(self, text):
         '''
         Pad an input string according to PKCS#7
+        :param text: The text to encode.
         '''
-        l = len(text)
-        output = StringIO.StringIO()
-        val = self.k - (l % self.k)
-        for _ in xrange(val):
+        length_of_input = len(text)
+        output = StringIO()
+        val = self.k - (length_of_input % self.k)
+        for _ in range(val):
             output.write('%02x' % val)
         return text + binascii.unhexlify(output.getvalue())
