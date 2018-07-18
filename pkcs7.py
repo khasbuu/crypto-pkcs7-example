@@ -64,4 +64,4 @@ class PKCS7Encoder(object):
         val = self.k - (length_of_input % self.k)
         for _ in range(val):
             output.write('%02x' % val)
-        return text + binascii.unhexlify(output.getvalue()).decode('utf-8')
+        return text + binascii.unhexlify(output.getvalue())
