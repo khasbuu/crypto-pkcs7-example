@@ -47,7 +47,10 @@ class PKCS7Encoder(object):
         :exception ValueError: Raised when the input padding is missing or corrupt.
         '''
         length_of_input = len(text)
-        val = int(binascii.hexlify(text[-1]), 16)
+        last = text[-1]
+        if isinstance(last, str):
+            last = last.encode('utf-8')
+        val = int(binascii.hexlify(last), 16)
         if val > self.k:
             raise ValueError('Input is not padded or padding is corrupt')
 
